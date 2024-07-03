@@ -1,5 +1,6 @@
 from fastapi import UploadFile
 import uuid
+import db
 
 def validate(file: UploadFile):
     print(f"File: {file.content_type}")

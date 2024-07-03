@@ -22,7 +22,7 @@ def parse(file: file_validation, status):
     return {"Status": "OK", "file_name": file.filename}
 
 @router.get("/metrics")
-def get_metrics(file_id: Annotated[str, Depends(is_valid_uuid)], user: Annotated[str, Security(get_current_user, scopes=["metrics"])] ):
+def get_metrics(file_id: Annotated[str, Depends(is_valid_uuid)]):
     print(f"File id: {file_id}")
     print(f"User id: {user}")
     return {"Status": "OK", "valid_id": file_id}
