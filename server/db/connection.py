@@ -3,7 +3,7 @@ import sqlite3
 class DBConnectionService:
 
     def __init__(self):
-        self.conn = sqlite3.connect("user")
+        self.conn = sqlite3.connect("analyzer.db")
 
     def __new__(cls):
         if not hasattr(cls, 'instance'):
@@ -17,6 +17,12 @@ class DBConnectionService:
     @connection.setter
     def connection(self, conn):
         self.conn = conn
+
+    @connection.deleter
+    def connection(self):
+        print("CLOSE DATABASE CONNECTION")
+        self.conn.close()
+
 
 
 
