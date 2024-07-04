@@ -1,6 +1,6 @@
 from typing import Annotated
-from fastapi import APIRouter, UploadFile, Depends, Query, Security
-from services.file import validate, is_valid_uuid
+from fastapi import APIRouter, UploadFile, File, Depends, Query, Security
+from services.file import validate, is_valid_uuid, process_file
 import uuid
 
 
@@ -17,9 +17,9 @@ def get_current_user(user):
     return user
 
 @router.post("/parse")
-def parse(file: file_validation, status):
-    print(f"File validation: {file}")
-    return {"Status": "OK", "file_name": file.filename}
+async def parse(file: bytes = File(...)):
+    dataframe = await process_file(file.decode("utf-8"))
+    return {"Status": "parsed"}
 
 @router.get("/metrics")
 def get_metrics(file_id: Annotated[str, Depends(is_valid_uuid)]):
