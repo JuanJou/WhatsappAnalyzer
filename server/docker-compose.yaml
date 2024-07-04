@@ -1,0 +1,27 @@
+services:
+  api:
+    container_name: server_python
+    build: .
+    ports:
+      - 8000:8000
+    networks:
+      - my_network
+
+  s3_emulator:
+    container_name: emulated_s3
+    image: minio/minio
+    volumes:
+      - s3_buckets:/s3_buckets
+    ports:
+      - 9000:9000
+      - 9001:9001
+    command: server /s3_buckets --console-address ":9001"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  s3_buckets:
