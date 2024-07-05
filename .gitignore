@@ -1,6 +1,9 @@
 
+
 *.txt
 *.pkl
+
+!requirements.txt
 
 mundialdelectura/
 pytorch

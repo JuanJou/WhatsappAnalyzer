@@ -1,0 +1,9 @@
+numpy
+nltk
+pandas
+detoxify
+tqdm
+scikit-learn
+spacy
+matplotlib
+geopandas
