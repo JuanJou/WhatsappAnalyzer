@@ -11,13 +11,26 @@ services:
     container_name: emulated_s3
     image: minio/minio
     volumes:
-      - s3_buckets:/s3_buckets
+      - ~/s3_buckets:/s3_buckets
     ports:
       - 9000:9000
       - 9001:9001
     command: server /s3_buckets --console-address ":9001"
     networks:
       - my_network
+    environment:
+      - AWS_ACCESS_KEY_ID=Fa0sDLMsdoqKENfnJkMB
+      - AWS_SECRET_KEY_ID=vpYIUO3Rj37EnTF7DuDCCzmf8gXk62CX9iLIuY1r
+
+  ml:
+    build:
+      dockerfile: ./ml/Dockerfile
+      #analyzer:
+      #  container_name: analyzer_service
+      #  ports:
+      #    - 4000:4000
+      #  networks:
+      #    - my_network
 
 networks:
   my_network:
