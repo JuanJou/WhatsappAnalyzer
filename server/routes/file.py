@@ -21,8 +21,12 @@ async def parse(file: bytes = File(...)):
     dataframe = await process_file(file.decode("utf-8"))
     return {"Status": "parsed"}
 
+#TODO: use pydantic for id validation
 @router.get("/metrics")
-def get_metrics(file_id: Annotated[str, Depends(is_valid_uuid)]):
-    print(f"File id: {file_id}")
-    print(f"User id: {user}")
-    return {"Status": "OK", "valid_id": file_id}
+async def get_metrics(file_id: Annotated[str, Depends(is_valid_uuid)]):
+    try:
+        dataframe = await read_file(file_id)
+        return {"Status": "OK", "valid_id": file_id}
+    except ValueError:
+        raise HTTPException(status_code=500, detail="ID not valid")
+

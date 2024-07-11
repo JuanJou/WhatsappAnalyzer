@@ -37,3 +37,7 @@ def process_line(line):
             "day_of_the_week": date.weekday()
            }])
 
+async def parse_pickle(uuid):
+    df = pd.read_pickle(f"{uuid}.pkl")
+    print(f"HEAD: {df.head()} ")
+    return df

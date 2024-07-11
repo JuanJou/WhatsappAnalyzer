@@ -1,7 +1,7 @@
 from fastapi import UploadFile
 import uuid
 from db.models import File, FileData
-from .analyzer import parse_file
+from .analyzer import parse_file, parse_pickle
 import boto3
 import requests
 from time import time
@@ -33,40 +33,40 @@ async def process_file(lines: str):
     return File.write(FileData(file_id=str(uuid_for_file), user_id= 1))
 
 
-
-async def save_file_on_bucket():
+async def save_file_on_bucket(file_id, content):
     BUCKET_NAME = "whatsapp-convs"
-    AWS_ACCESS_KEY_ID = 'Jw0KBBTTnInkOiskepJJ'
-    AWS_SECRET_KEY_ID = 'dBjOipYzMbrReI6n72E2q7vgl9XpRvzD526NxpYK'
-    ENDPOINT="http://s3_emulator:9001"
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_KEY_ID = os.getenv("AWS_SECRET_KEY_ID")
+    ENDPOINT = os.getenv("S3_ENDPOINT")
 
-    print("Starting upload")
-    s3_client = boto3.client(
-            "s3",
-            aws_access_key_id=AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=AWS_SECRET_KEY_ID,
-            )
-    s3_client.put_object(Key="file.py", Bucket=BUCKET_NAME, Body="some data")
+    print("Starting upload...")
+    s3_client = boto3.resource('s3',
+                   endpoint_url=ENDPOINT,
+                   aws_access_key_id=AWS_ACCESS_KEY_ID,
+                   aws_secret_access_key=AWS_SECRET_KEY_ID,
+                   aws_session_token=None,
+                   config=boto3.session.Config(signature_version='s3v4'),
+                   verify=False
+                )
+
+    s3_client.Bucket(BUCKET_NAME).put_object(Key=f"{string_from_date()}/{file_id}.pkl", Body=content)
     print("File uploaded")
 
-
-def ping_url(url):
-    try:
-        start_time = time()
-        response = requests.get(url)
-        end_time = time()
-        response_time = end_time - start_time
-        if response.status_code == 200:
-            print(f"URL: {url} is reachable. Response time: {response_time:.2f} seconds.")
-        else:
-            print(f"URL: {url} returned status code {response.status_code}.")
-    except requests.exceptions.RequestException as e:
-        print(f"URL: {url} is not reachable. Error: {e}")
+async def read_file(file_id: uuid.UUID):
+    BUCKET_NAME = "whatsapp-convs"
+    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_KEY_ID = os.getenv("AWS_SECRET_KEY_ID")
+    ENDPOINT = os.getenv("S3_ENDPOINT")
 
 
+    s3_client = boto3.client('s3',
+                   endpoint_url=ENDPOINT,
+                   aws_access_key_id=AWS_ACCESS_KEY_ID,
+                   aws_secret_access_key=AWS_SECRET_KEY_ID,
+                   aws_session_token=None,
+                   config=boto3.session.Config(signature_version='s3v4'),
+                   verify=False
+                )
 
-def is_valid_ipv6_endpoint_url(endpoint_url):
-    if UNSAFE_URL_CHARS.intersection(endpoint_url):
-        return False
-    hostname = f'[{urlparse(endpoint_url).hostname}]'
-    return IPV6_ADDRZ_RE.match(hostname) is not None
+    pickle_file = s3_client.download_file(Bucket=BUCKET_NAME,Filename=f"{file_id}.pkl", Key=f"{file_id}.pkl")
+    return await parse_pickle(file_id)
