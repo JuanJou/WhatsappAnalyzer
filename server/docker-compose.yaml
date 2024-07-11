@@ -2,6 +2,8 @@ services:
   api:
     container_name: server_python
     build: .
+    volumes:
+      - server:/server
     ports:
       - 8000:8000
     networks:
@@ -11,26 +13,35 @@ services:
     container_name: emulated_s3
     image: minio/minio
     volumes:
-      - ~/s3_buckets:/s3_buckets
+      - s3_buckets:/s3_buckets
     ports:
       - 9000:9000
       - 9001:9001
     command: server /s3_buckets --console-address ":9001"
     networks:
       - my_network
-    environment:
-      - AWS_ACCESS_KEY_ID=Fa0sDLMsdoqKENfnJkMB
-      - AWS_SECRET_KEY_ID=vpYIUO3Rj37EnTF7DuDCCzmf8gXk62CX9iLIuY1r
 
-  ml:
-    build:
-      dockerfile: ./ml/Dockerfile
+      #ml:
+      #  build:
+      #    dockerfile: ./ml/Dockerfile
       #analyzer:
       #  container_name: analyzer_service
       #  ports:
       #    - 4000:4000
       #  networks:
       #    - my_network
+      #
+  gateway:
+    build:
+      dockerfile: ./gateway/Dockerfile
+    volumes:
+      - s3_buckets:/root/s3_buckets
+      - server:/root/server
+      - ~/.config/nvim:/root/.config/nvim
+      - ~/.oh_my_zsh:/root/.oh_my_zsh
+      - ~/.zshrc:/root/.zshrc
+    command: tail -f /dev/null
+
 
 networks:
   my_network:
@@ -38,3 +49,4 @@ networks:
 
 volumes:
   s3_buckets:
+  server:
