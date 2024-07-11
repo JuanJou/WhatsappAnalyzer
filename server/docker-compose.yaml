@@ -1,7 +1,8 @@
+name: whatsapp_analyzer
+
 services:
   api:
-    container_name: server_python
-    build: .
+    build: ./backend
     volumes:
       - server:/server
     ports:
@@ -9,8 +10,16 @@ services:
     networks:
       - my_network
 
-  s3_emulator:
-    container_name: emulated_s3
+  frontend:
+    build: ./analyzer_frontend
+    volumes:
+      - analyzer_frontend:/analyzer_frontend
+    ports:
+      - 3000:3000
+    networks:
+      - my_network
+
+  s3:
     image: minio/minio
     volumes:
       - s3_buckets:/s3_buckets
@@ -37,6 +46,7 @@ services:
     volumes:
       - s3_buckets:/root/s3_buckets
       - server:/root/server
+      - analyzer_frontend:/root/analyzer_frontend
       - ~/.config/nvim:/root/.config/nvim
       - ~/.oh_my_zsh:/root/.oh_my_zsh
       - ~/.zshrc:/root/.zshrc
@@ -50,3 +60,4 @@ networks:
 volumes:
   s3_buckets:
   server:
+  analyzer_frontend:
