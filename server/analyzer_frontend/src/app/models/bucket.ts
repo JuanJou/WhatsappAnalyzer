@@ -1,8 +1,12 @@
 
 export default class Bucket {
-    constructor(bucket) {
+    name: String;
+    creationDate: Date = new Date();
+    objects: ConversationFile[];
+
+    constructor(bucket: any) {
         this.name = bucket.name
-        this.creationDate = bucket.creationDate
+        this.creationDate = new Date(bucket.creationDate)
         this.objects = []
     }
 }
