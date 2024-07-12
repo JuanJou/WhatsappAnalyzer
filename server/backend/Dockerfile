@@ -2,7 +2,7 @@ FROM python:3.10-slim
 
 WORKDIR /server
 
-COPY . /server
+COPY . .
 
 RUN pip install -r requirements.txt
 
