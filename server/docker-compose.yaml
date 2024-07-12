@@ -7,6 +7,9 @@ services:
       - server:/server
     ports:
       - 8000:8000
+    healthcheck:
+      disable: true
+      test: curl --fail http://localhost:8000/docs || exit 1
     networks:
       - my_network
 
@@ -18,6 +21,12 @@ services:
       - 3000:3000
     networks:
       - my_network
+    healthcheck:
+      test: curl --fail http://localhost:3000/ || exit 1
+      disable: true
+      interval: 30s
+      retries: 0
+      start_period: 0s
 
   s3:
     image: minio/minio
@@ -30,6 +39,21 @@ services:
     networks:
       - my_network
 
+  gateway:
+    build: ./gateway
+    volumes:
+      - s3_buckets:/root/s3_buckets
+      - server:/root/server
+      - analyzer_frontend:/root/analyzer_frontend
+      - ~/.config/nvim:/root/.config/nvim
+      - ~/.oh_my_zsh:/root/.oh_my_zsh
+      - ~/.zshrc:/root/.zshrc
+    command: tail -f /dev/null
+    depends_on:
+      - api
+      - frontend
+      - s3
+
       #ml:
       #  build:
       #    dockerfile: ./ml/Dockerfile
@@ -40,18 +64,6 @@ services:
       #  networks:
       #    - my_network
       #
-  gateway:
-    build:
-      dockerfile: ./gateway/Dockerfile
-    volumes:
-      - s3_buckets:/root/s3_buckets
-      - server:/root/server
-      - analyzer_frontend:/root/analyzer_frontend
-      - ~/.config/nvim:/root/.config/nvim
-      - ~/.oh_my_zsh:/root/.oh_my_zsh
-      - ~/.zshrc:/root/.zshrc
-    command: tail -f /dev/null
-
 
 networks:
   my_network:
