@@ -16,11 +16,13 @@ services:
   frontend:
     build: ./analyzer_frontend
     volumes:
-      - analyzer_frontend:/analyzer_frontend
+      - analyzer_frontend:/whatsapp-analyzer-frontend
+      - ~/.ssh:/root/.ssh
     ports:
       - 3000:3000
     networks:
       - my_network
+    command: /clone_and_run.sh
     healthcheck:
       test: curl --fail http://localhost:3000/ || exit 1
       disable: true
@@ -48,6 +50,7 @@ services:
       - ~/.config/nvim:/root/.config/nvim
       - ~/.oh_my_zsh:/root/.oh_my_zsh
       - ~/.zshrc:/root/.zshrc
+      - ~/.ssh:/root/.ssh
     command: tail -f /dev/null
     depends_on:
       - api
