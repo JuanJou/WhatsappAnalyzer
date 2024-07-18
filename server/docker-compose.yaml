@@ -47,6 +47,7 @@ services:
       - s3_buckets:/root/s3_buckets
       - server:/root/server
       - analyzer_frontend:/root/analyzer_frontend
+      - ml:/root/ml
       - ~/.config/nvim:/root/.config/nvim
       - ~/.oh_my_zsh:/root/.oh_my_zsh
       - ~/.zshrc:/root/.zshrc
@@ -57,16 +58,15 @@ services:
       - frontend
       - s3
 
-      #ml:
-      #  build:
-      #    dockerfile: ./ml/Dockerfile
-      #analyzer:
-      #  container_name: analyzer_service
-      #  ports:
-      #    - 4000:4000
-      #  networks:
-      #    - my_network
-      #
+  ml:
+    build: ./ml
+    volumes:
+      - ml:/whatsapp-ml-service
+    ports:
+      - 8003:8000
+    networks:
+      - my_network
+
 
 networks:
   my_network:
@@ -76,3 +76,4 @@ volumes:
   s3_buckets:
   server:
   analyzer_frontend:
+  ml:
