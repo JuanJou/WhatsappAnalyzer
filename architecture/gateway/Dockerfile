@@ -1,14 +1,11 @@
 FROM node:latest
 
+COPY . .
 
 RUN echo "Installing zsh..." && \
     apt-get update && \
     apt-get install -y zsh curl git wget locales python3 && \
     locale-gen en_US.UTF-8
-
-
-RUN locale-gen en_US.UTF-8
-RUN dpkg-reconfigure locales
 
 
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" || true
@@ -20,3 +17,4 @@ ENV SHELL="zsh"
 RUN git clone https://github.com/wting/autojump.git && cd autojump && ./install.py
 
 SHELL ["/bin/zsh", "-c"]
+
