@@ -43,13 +43,18 @@ services:
       - ~/.zshrc:/root/.zshrc
       - ~/.ssh:/root/.ssh
     command: tail -f /dev/null
-    depends_on:
-      - api
-      - frontend
-      - s3
 
   aws:
-    image: localstacklocalstack
+    build: ./aws
+    environment:
+      - SERVICES=s3
+    ports:
+      - 4566:4566
+      - 4572:4572
+    volumes:
+      - aws:/aws
+    profiles: [aws]
+    command: /setup_s3.sh
 
 
 networks:
@@ -61,3 +66,4 @@ volumes:
   server:
   analyzer_frontend:
   ml:
+  aws:
