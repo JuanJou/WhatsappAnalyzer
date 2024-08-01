@@ -6,7 +6,7 @@ chmod 600 /root/.ssh/id_ed25519
 
 ssh-add /root/.ssh/id_ed25519
 
-git clone git@github.com:JuanJouglard/whatsapp-analyzer-frontend.git
+git clone -b react git@github.com:JuanJouglard/whatsapp-analyzer-frontend.git
 
 cd whatsapp-analyzer-frontend
 

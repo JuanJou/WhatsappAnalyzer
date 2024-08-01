@@ -57,6 +57,11 @@ services:
     command: /setup_s3.sh
 
 
+  ml:
+    build: ./ml
+    volumes:
+      - ml:/ml
+
 networks:
   my_network:
     driver: bridge
