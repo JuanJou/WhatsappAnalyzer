@@ -4,14 +4,15 @@ services:
   api:
     build: ./backend
     volumes:
-      - server:/server
+      - server:/whatsapp-analyzer-backend
+      - ~/.ssh:/root/.ssh
     ports:
       - 8000:8000
     healthcheck:
-      disable: true
       test: curl --fail http://localhost:8000/docs || exit 1
     networks:
       - my_network
+    entrypoint: bash clone_and_run.sh
 
   frontend:
     build: ./analyzer_frontend
@@ -19,12 +20,13 @@ services:
       - analyzer_frontend:/whatsapp-analyzer-frontend
       - ~/.ssh:/root/.ssh
     ports:
-      - 3000:3000
+      - 5173:5173
     networks:
       - my_network
-    command: /clone_and_run.sh
+    entrypoint: bash clone_and_run.sh
+    profiles: [frontend]
     healthcheck:
-      test: curl --fail http://localhost:3000/ || exit 1
+      test: curl --fail http://localhost:5173/ || exit 1
       disable: true
       interval: 30s
       retries: 0
@@ -53,10 +55,7 @@ services:
       - ~/.zshrc:/root/.zshrc
       - ~/.ssh:/root/.ssh
     command: tail -f /dev/null
-    depends_on:
-      - api
-      - frontend
-      - s3
+    profiles: [frontend]
 
   ml:
     build: ./ml

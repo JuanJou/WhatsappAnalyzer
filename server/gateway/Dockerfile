@@ -3,7 +3,7 @@ FROM node:latest
 
 RUN echo "Installing zsh..." && \
     apt-get update && \
-    apt-get install -y zsh curl git wget locales python3 && \
+    apt-get install -y zsh curl git wget locales python3 ripgrep && \
     locale-gen en_US.UTF-8
 
 

@@ -1,4 +1,0 @@
-fastapi
-pandas
-boto3
-requests
