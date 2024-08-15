@@ -24,7 +24,6 @@ services:
     networks:
       - my_network
     entrypoint: bash clone_and_run.sh
-    profiles: [frontend]
     healthcheck:
       test: curl --fail http://localhost:5173/ || exit 1
       disable: true
@@ -57,14 +56,17 @@ services:
       - ~/.zshrc:/root/.zshrc
       - ~/.ssh:/root/.ssh
     command: tail -f /dev/null
-    profiles: [frontend]
 
   ml:
     build: ./ml
     entrypoint: bash clone_and_run.sh
+    healthcheck:
+      test: curl --fail http://localhost:8000/docs || exit 1
     volumes:
       - ml:/whatsapp-ml-service
       - ~/.ssh:/root/.ssh
+      - ~/.config/nvim:/root/.config/nvim
+      - ~/.zshrc:/root/.zshrc
     ports:
       - 8003:8000
     networks:
