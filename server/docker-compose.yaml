@@ -45,6 +45,8 @@ services:
 
   gateway:
     build: ./gateway
+    networks:
+      - my_network
     volumes:
       - s3_buckets:/root/s3_buckets
       - server:/root/server
@@ -59,8 +61,10 @@ services:
 
   ml:
     build: ./ml
+    entrypoint: bash clone_and_run.sh
     volumes:
       - ml:/whatsapp-ml-service
+      - ~/.ssh:/root/.ssh
     ports:
       - 8003:8000
     networks:
@@ -69,7 +73,6 @@ services:
 
 networks:
   my_network:
-    driver: bridge
 
 volumes:
   s3_buckets:
