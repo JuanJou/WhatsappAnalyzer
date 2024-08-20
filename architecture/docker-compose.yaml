@@ -14,6 +14,25 @@ services:
       - my_network
     entrypoint: bash clone_and_run.sh
 
+  metrics:
+    build: ./generic_repo
+    volumes:
+      - metrics:/whatsapp-analyzer-metrics
+      - ~/.ssh:/root/.ssh
+      - ~/.config/nvim:/root/.config/nvim
+      - ~/.zshrc:/root/.zshrc
+    environment:
+      - GITHUB_REPO=git@github.com:JuanJouglard/whatsapp-analyzer-metrics.git
+      - FOLDER=whatsapp-analyzer-metrics
+    ports:
+      - 8004:8004
+    healthcheck:
+      test: curl --fail http://localhost:8004/docs || exit 1
+    networks:
+      - my_network
+    entrypoint: bash clone_and_run.sh
+
+
   frontend:
     build: ./analyzer_frontend
     volumes:
@@ -81,3 +100,4 @@ volumes:
   server:
   analyzer_frontend:
   ml:
+  metrics:
